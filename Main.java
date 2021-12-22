@@ -130,16 +130,73 @@ public class Main extends Application {
             GridPane.setColumnIndex(field,3);
             GridPane.setRowIndex(field,1);
 
+
+
             grid.getChildren().add(submit);
             GridPane.setColumnIndex(submit,2);
             GridPane.setRowIndex(submit,2);
             submit.setTranslateX(50);
             submit.setTranslateY(100);
             SecondaryStage.show();
+
+
             submit.setOnAction(l->{
                 String Category=field.getText();
                 System.out.println("Category of the file is: ");
                 System.out.println(Category);
+
+
+                Label cover=new Label("Do you want to upload a cover photo for "+file.getName()+" ?");
+                cover.setFont(Font.font("Helvetica",15 ));
+
+                AnchorPane cpane=new AnchorPane();
+                AnchorPane.setTopAnchor(cover, 10.0);
+                cpane.getChildren().add(cover);
+
+                Scene coverscene=new Scene(cpane,475,200);
+                Stage cstage=new Stage();
+                cstage.setScene(coverscene);
+                cstage.setTitle("Cover photo");
+                cstage.show();
+
+                Button yes=new Button("YES");
+                Button no=new Button("NO");
+
+                yes.setMinWidth(120);
+                yes.setMinHeight(30);
+                yes.setTranslateX(100);
+                yes.setTranslateY(100);
+
+                no.setMinWidth(120);
+                no.setMinHeight(30);
+                no.setTranslateX(250);
+                no.setTranslateY(100);
+
+                cpane.getChildren().add(yes);
+                cpane.getChildren().add(no);
+
+                no.setOnAction(n->{
+                    cstage.close();
+                    SecondaryStage.close();
+                });
+
+                yes.setOnAction(y->{
+                    FileChooser pic=new FileChooser();
+                    pic.selectedExtensionFilterProperty();
+                    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files","*.jpg","*.png","*.jpeg","*.gif");
+                    pic.setTitle("Upload your cover");
+                    pic.getExtensionFilters().add(extFilter);
+                   File coverfile= pic.showOpenDialog(null);
+
+                    String covername = String.valueOf(coverfile);
+                    System.out.println("The path of the cover picture is: "+covername);
+                    cstage.close();
+                    SecondaryStage.close();
+
+                });
+
+
+
             });
         } );
 
@@ -158,6 +215,7 @@ public class Main extends Application {
                String temp1=file.getName().toString();
                String[] Extension= temp1.split("\\.");
                System.out.println(Extension[Extension.length-1]);
+
 
            }
 
