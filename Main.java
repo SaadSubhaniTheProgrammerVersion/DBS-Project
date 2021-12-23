@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,18 +24,40 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 
 import java.io.File;
+
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Main extends Application {
+    Statement stmt;
+    // sets up database connection
+    public void initializeDB(){
+        try{
+            // load jdbc driver
+            Class.forName("com.mysql.jdbc.Driver");
+            // establish connection with a database
+            Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/file_management", "root", "saadsubhani123");
+            // create a statement
+            stmt = con.createStatement();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
 
     public static void main(String[] args) {
         launch(args);
     }
 
+
+
     public void start(Stage PrimaryStage) {
+
         StackPane pane = new StackPane();
         Button temp = new Button();
         temp.setGraphic(new ImageView(new Image("sample/upload_button_progress_animation.gif")));
@@ -178,6 +201,26 @@ public class Main extends Application {
                 no.setOnAction(n->{
                     cstage.close();
                     SecondaryStage.close();
+
+                    initializeDB();
+
+                    String pathstr=file.getAbsolutePath();
+                    pathstr=pathstr.replaceAll("\\\\", "\\\\\\\\");
+                    System.out.println(pathstr);
+
+
+                    try {
+                        String q = "Insert into files(filename,file_category,file_extension,date_created,file_path) " +
+                                "VALUES(" +"'"+file.getName()+"'"+ ","+"'"+Category+ "'"+"," + "'"+Extension[Extension.length-1]+"'"+","+"'"+dateFormat.format(file.lastModified())+"'"+","
+                                +"'"+pathstr+"'"+")";
+
+                        stmt.execute(q);
+
+                    }
+                    catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+
                 });
 
                 yes.setOnAction(y->{
@@ -192,6 +235,37 @@ public class Main extends Application {
                     System.out.println("The path of the cover picture is: "+covername);
                     cstage.close();
                     SecondaryStage.close();
+                    String coverpath = String.valueOf(covername);
+
+
+                    initializeDB();
+
+                    String pathstr1=file.getAbsolutePath();
+                    pathstr1=pathstr1.replaceAll("\\\\", "\\\\\\\\");
+                    System.out.println(pathstr1);
+
+                    String pathstr2=covername;
+                    pathstr2=pathstr2.replaceAll("\\\\", "\\\\\\\\");
+                    System.out.println(pathstr2);
+
+
+
+                    try {
+                        String q = "Insert into files(filename,file_category,file_extension,date_created,file_path,cover_page) " +
+                                "VALUES(" +"'"+file.getName()+"'"+ ","+"'"+Category+ "'"+"," + "'"+Extension[Extension.length-1]+"'"+","+"'"+dateFormat.format(file.lastModified())+"'"+","
+                                +"'"+pathstr1+"'"+","+"'"+pathstr2+"'"+")";
+
+
+
+                        stmt.execute(q);
+
+                    }
+                    catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+
+
+
 
                 });
 
